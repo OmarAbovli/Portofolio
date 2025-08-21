@@ -13,22 +13,22 @@ const Projects = () => {
       demoPath: 'https://that-creative-company.vercel.app/'
     },
     {
-      title: 'Task Management App',
-      description: 'Collaborative task management with real-time updates, progress tracking, and team features.',
-      image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500',
+      title: 'tafawok EDU',
+      description: 'Tafouq is an educational platform where teachers can be added and upload their own protected and secured videos. Students can purchase videos and subscribe to teachers. Teachers can also upload images and control the access permissions of each student to the content.',
+      image: 'https://imgpx.com/GhJ7uwaJ1y63.png',
       tech: ['React', 'State Management', 'UI/UX', 'Productivity'],
-      github: 'https://github.com/OmarAbovli',
-      live: '/demo/taskmanager',
-      demoPath: 'taskmanager'
+      github: 'https://github.com/OmarAbovli/tafawokDEMO',
+      live: 'https://tafawokdemo.vercel.app/',
+      demoPath: 'https://tafawokdemo.vercel.app/'
     },
     {
       title: 'AI Dashboard',
-      description: 'Analytics dashboard with AI-powered insights, real-time data visualization, and machine learning.',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500',
+      description: 'Sahel is a SaaS application for managing companies and warehouses, featuring a modern, simple, and eye-friendly design. It includes accounting modules for managing cash, accounts, banks, employees, the general ledger, and debts, as well as employee management. The system can also be integrated with hardware such as fingerprint devices and cameras. Each company has two types of accounts: manager accounts and employee accounts, and every manager can assign and customize permissions for each employee. The platform also provides AI-powered company data analysis, offering recommendations and forecasts using artificial intelligence.',
+      image: 'https://imgpx.com/yw3eCjGvkuF1.png',
       tech: ['React', 'AI/ML', 'Data Viz', 'Analytics'],
       github: 'https://github.com/OmarAbovli',
-      live: '/demo/aidashboard',
-      demoPath: 'aidashboard'
+      live: 'https://sahl-demo.vercel.app/',
+      demoPath: 'https://sahl-demo.vercel.app/'
     },
   ];
 
