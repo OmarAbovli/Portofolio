@@ -22,7 +22,7 @@ const Projects = () => {
       demoPath: 'https://tafawokdemo.vercel.app/'
     },
     {
-      title: 'AI Dashboard',
+      title: 'Sahel is an administrative management sass app',
       description: 'Sahel is a SaaS application for managing companies and warehouses, featuring a modern, simple, and eye-friendly design. It includes accounting modules for managing cash, accounts, banks, employees, the general ledger, and debts, as well as employee management. The system can also be integrated with hardware such as fingerprint devices and cameras. Each company has two types of accounts: manager accounts and employee accounts, and every manager can assign and customize permissions for each employee. The platform also provides AI-powered company data analysis, offering recommendations and forecasts using artificial intelligence.',
       image: 'https://imgpx.com/yw3eCjGvkuF1.png',
       tech: ['React', 'AI/ML', 'Data Viz', 'Analytics'],
