@@ -4,12 +4,12 @@ import { ExternalLink, Github } from 'lucide-react';
 const Projects = () => {
   const projects = [
     {
-      title: 'E-Commerce Platform',
-      description: 'Full-stack e-commerce solution with React, real-time cart, and interactive shopping experience.',
+      title: 'That Creative Company',
+      description: 'software company built with React and Three.js to provide 3D elements. It’s a real company where you can start your project from.',
       image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500',
       tech: ['React', 'TypeScript', 'Tailwind', 'Real-time'],
-      github: 'https://github.com/OmarAbovli',
-      live: '/demo/ecommerce',
+      github: 'https://github.com/OmarAbovli/That-Creative-Company',
+      live: 'https://that-creative-company.vercel.app/',
       demoPath: 'ecommerce'
     },
     {
