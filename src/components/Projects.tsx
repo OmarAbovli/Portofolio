@@ -10,7 +10,7 @@ const Projects = () => {
       tech: ['React', 'TypeScript', 'Tailwind', 'Real-time'],
       github: 'https://github.com/OmarAbovli/That-Creative-Company',
       live: 'https://that-creative-company.vercel.app/',
-      demoPath: 'ecommerce'
+      demoPath: 'https://that-creative-company.vercel.app/'
     },
     {
       title: 'Task Management App',
