@@ -6,7 +6,7 @@ const Projects = () => {
     {
       title: 'That Creative Company',
       description: 'software company built with React and Three.js to provide 3D elements. It’s a real company where you can start your project from.',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500',
+      image: 'https://imgpx.com/W67aUeAKjeHc.png',
       tech: ['React', 'TypeScript', 'Tailwind', 'Real-time'],
       github: 'https://github.com/OmarAbovli/That-Creative-Company',
       live: 'https://that-creative-company.vercel.app/',
