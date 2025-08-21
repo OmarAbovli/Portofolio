@@ -33,9 +33,13 @@ const Projects = () => {
   ];
 
   const openDemo = (demoPath: string) => {
-    // Simply navigate to the demo route in the same window
-    window.open(`/demo/${demoPath}`, '_blank');
-  };
+  if (demoPath.startsWith('http')) {
+    window.open(demoPath, '_blank'); // لينك خارجي كامل
+  } else {
+    window.open(`/demo/${demoPath}`, '_blank'); // لينك داخلي
+  }
+};
+
 
   return (
     <section id="projects" className="min-h-screen py-20 px-6">
