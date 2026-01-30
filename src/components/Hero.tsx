@@ -1,78 +1,127 @@
 import { ArrowRight, Github, Linkedin, Mail, Terminal } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useTerminalCommands } from '../hooks/useTerminalCommands';
 
 const Hero = () => {
   const [text, setText] = useState('');
+  const [input, setInput] = useState('');
+  const [showInput, setShowInput] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const fullText = "Full Stack Developer";
+  const { history, executeCommand, addToHistory } = useTerminalCommands();
 
   useEffect(() => {
     let index = 0;
     const timer = setInterval(() => {
       setText(fullText.slice(0, index));
       index++;
-      if (index > fullText.length) clearInterval(timer);
+      if (index > fullText.length) {
+        clearInterval(timer);
+        setTimeout(() => setShowInput(true), 500);
+      }
     }, 100);
     return () => clearInterval(timer);
   }, []);
 
+  const handleCommand = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const output = executeCommand(input);
+      addToHistory(input, output);
+      setInput('');
+    }
+  };
+
+  const asciiArt = `
+   ___  __  __   _   ___ 
+  / _ \\|  \\/  | /_\\ | _ \\
+ | (_) | |\\/| |/ _ \\|   /
+  \\___/|_|  |_/_/ \\_\\_|_\\
+  `;
+
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative px-6 z-10">
       <div className="max-w-4xl w-full">
-        <div className="glass-card p-12 rounded-3xl border-l-4 border-cyan-400 relative overflow-hidden group">
+        <div className="terminal-window rounded-xl overflow-hidden group">
 
-          {/* Decorative Terminal Header */}
-          <div className="absolute top-0 left-0 w-full h-8 bg-slate-900/50 border-b border-white/5 flex items-center px-4 space-x-2">
-            <div className="w-3 h-3 rounded-full bg-red-500/50" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-            <div className="w-3 h-3 rounded-full bg-green-500/50" />
-            <div className="ml-4 font-mono text-xs text-slate-500">omarabovli@portfolio:~$</div>
+          {/* MacOS Window Title Bar */}
+          <div className="bg-[#2d2d2d] px-4 py-3 flex items-center border-b border-black/50">
+            <div className="flex space-x-2">
+              <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+              <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+              <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+            </div>
+            <div className="flex-1 text-center text-xs font-mono text-gray-400 ml-[-50px]">
+              omarabovli — -zsh — 80x24
+            </div>
           </div>
 
-          <div className="mt-8 space-y-6 relative z-10">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 text-sm font-mono mb-4 animate-fade-in">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-              </span>
-              <span>Available for hire</span>
-            </div>
+          <div className="p-8 md:p-12 space-y-6 relative z-10 bg-[#1e1e1e]/95 max-h-[600px] overflow-y-auto">
+            {/* ASCII Art */}
+            <pre className="text-blue-400 text-xs md:text-sm leading-tight opacity-60">
+              {asciiArt}
+            </pre>
 
-            <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-white font-mono">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-white font-mono">
               OMAR <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 neon-text">
+              <span className="text-blue-500">
                 ABOVLI
               </span>
             </h1>
 
-            <div className="h-12 flex items-center">
-              <span className="text-2xl md:text-3xl text-slate-300 font-mono">
-                {">"} {text}<span className="animate-pulse text-cyan-400">_</span>
+            <div className="h-8 flex items-center">
+              <span className="text-xl md:text-2xl text-gray-300 font-mono">
+                {">"} {text}<span className="animate-pulse text-gray-500">_</span>
               </span>
             </div>
 
-            <p className="text-slate-400 text-lg max-w-xl leading-relaxed">
+            <p className="text-gray-400 text-base max-w-xl leading-relaxed font-mono">
               Crafting high-performance digital experiences with a focus on
-              <span className="text-cyan-400"> interactive 3D elements</span> and
-              <span className="text-purple-400"> scalable architecture</span>.
+              <span className="text-blue-400"> interactive 3D elements</span> and
+              <span className="text-green-400"> scalable architecture</span>.
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-6">
-              <a href="#projects" className="px-8 py-4 bg-cyan-500 text-black font-bold rounded-xl hover:bg-cyan-400 transition-all flex items-center gap-2 font-mono group/btn">
-                <Terminal size={20} />
-                View Work
-                <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+            {/* Command History */}
+            {history.length > 0 && (
+              <div className="space-y-2 border-t border-white/10 pt-4">
+                {history.map((entry, i) => (
+                  <div key={i} className="font-mono text-sm">
+                    <div className="text-green-400">$ {entry.command}</div>
+                    <pre className="text-gray-400 whitespace-pre-wrap ml-2">{entry.output}</pre>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Interactive Input */}
+            {showInput && (
+              <div className="flex items-center gap-2 font-mono text-sm border-t border-white/10 pt-4">
+                <span className="text-green-400">$</span>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleCommand}
+                  placeholder="Type 'help' for commands..."
+                  className="flex-1 bg-transparent text-white outline-none placeholder:text-gray-600"
+                  autoFocus
+                />
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-4 pt-4 border-t border-white/10">
+              <a href="#projects" className="px-6 py-3 bg-[#3a3a3c] hover:bg-[#48484a] text-white rounded-md transition-all flex items-center gap-2 font-mono group/btn border border-white/10">
+                <Terminal size={18} />
+                <span>./view_work.sh</span>
               </a>
 
               <div className="flex items-center gap-4 px-6">
-                <SocialLink href="https://github.com/OmarAbovli" icon={<Github size={20} />} />
-                <SocialLink href="https://linkedin.com" icon={<Linkedin size={20} />} />
-                <SocialLink href="mailto:contact@example.com" icon={<Mail size={20} />} />
+                <SocialLink href="https://github.com/OmarAbovli" icon={<Github size={18} />} />
+                <SocialLink href="https://linkedin.com" icon={<Linkedin size={18} />} />
+                <SocialLink href="mailto:contact@example.com" icon={<Mail size={18} />} />
               </div>
             </div>
           </div>
-
-          {/* Background Gradient Blob */}
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl opacity-50 group-hover:opacity-75 transition-opacity duration-700" />
         </div>
       </div>
     </section>
@@ -84,7 +133,7 @@ const SocialLink = ({ href, icon }: { href: string; icon: React.ReactNode }) => 
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-cyan-400 hover:border-cyan-400 hover:scale-110 transition-all duration-300"
+    className="w-10 h-10 flex items-center justify-center rounded-md text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300"
   >
     {icon}
   </a>

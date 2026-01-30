@@ -1,32 +1,146 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>omar Portfolio - Full Stack Developer</title>
-    <meta name="description" content="Creative 3D Portfolio showcasing full-stack development skills" />
-    <meta name="author" content="omar" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>omar Portfolio - Full Stack Developer</title>
+  <meta name="description" content="Creative 3D Portfolio showcasing full-stack development skills" />
+  <meta name="author" content="omar" />
 
-    <meta property="og:title" content="omar Portfolio - Full Stack Developer" />
-    <meta property="og:description" content="Creative 3D Portfolio " />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://asset.cloudinary.com/dvcq5lmym/3fef42e3bbc226f1f2d69c5a3f16c471" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
 
-    <meta name="twitter:card" content="summary_large_image" />
-    
-    <meta name="twitter:image" content="https://asset.cloudinary.com/dvcq5lmym/3fef42e3bbc226f1f2d69c5a3f16c471" />
-  </head>
+  <meta property="og:title" content="omar Portfolio - Full Stack Developer" />
+  <meta property="og:description" content="Creative 3D Portfolio " />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://asset.cloudinary.com/dvcq5lmym/3fef42e3bbc226f1f2d69c5a3f16c471" />
 
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="twitter:image" content="https://asset.cloudinary.com/dvcq5lmym/3fef42e3bbc226f1f2d69c5a3f16c471" />
+
+  <!-- Animated Terminal Favicon -->
+  <script>
+    // Animated Terminal Favicon
+    let frame = 0;
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext('2d');
+
+    function drawFavicon() {
+      if (!ctx) return;
+
+      // Clear canvas
+      ctx.clearRect(0, 0, 32, 32);
+
+      // Background
+      ctx.fillStyle = '#1e1e1e';
+      ctx.fillRect(0, 0, 32, 32);
+
+      // Terminal window border
+      ctx.strokeStyle = '#3a3a3c';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(2, 2, 28, 28);
+
+      // Traffic lights
+      const lights = [
+        { x: 5, color: '#ff5f56' },
+        { x: 10, color: '#ffbd2e' },
+        { x: 15, color: '#27c93f' }
+      ];
+
+      lights.forEach(light => {
+        ctx.fillStyle = light.color;
+        ctx.beginPath();
+        ctx.arc(light.x, 7, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Terminal prompt
+      ctx.fillStyle = '#30D158';
+      ctx.font = 'bold 10px monospace';
+      ctx.fillText('>', 6, 20);
+
+      // Blinking cursor
+      if (Math.floor(frame / 30) % 2 === 0) {
+        ctx.fillStyle = '#0A84FF';
+        ctx.fillRect(12, 14, 6, 8);
+      }
+
+      frame++;
+
+      // Update favicon
+      const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      link.type = 'image/x-icon';
+      link.rel = 'shortcut icon';
+      link.href = canvas.toDataURL();
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+
+    // Start animation when page loads
+    window.addEventListener('load', () => {
+      setInterval(drawFavicon, 1000 / 60);
+    });
+  </script>
+
+  <!-- Animated Terminal Title -->
+  <script>
+    const titles = [
+      '$ Omar Abovli',
+      '$ Full Stack Developer',
+      '$ React | Node.js | TypeScript',
+      '$ Building Digital Experiences',
+      '$ Available for Hire',
+      '$ ./portfolio.sh'
+    ];
+
+    let titleIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let currentTitle = '';
+
+    function animateTitle() {
+      const fullTitle = titles[titleIndex];
+
+      if (isDeleting) {
+        currentTitle = fullTitle.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        currentTitle = fullTitle.substring(0, charIndex + 1);
+        charIndex++;
+      }
+
+      // Add blinking cursor
+      document.title = currentTitle + (Math.floor(Date.now() / 500) % 2 === 0 ? '_' : '');
+
+      let speed = isDeleting ? 50 : 100;
+
+      if (!isDeleting && charIndex === fullTitle.length) {
+        speed = 2000; // Pause at end
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        titleIndex = (titleIndex + 1) % titles.length;
+        speed = 500;
+      }
+
+      setTimeout(animateTitle, speed);
+    }
+
+    window.addEventListener('load', animateTitle);
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+  <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
