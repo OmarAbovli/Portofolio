@@ -7,26 +7,30 @@ import Scene3D from './Scene3D';
 const ThreeBackground = () => {
   const mousePosition = useRef({ x: 0, y: 0 });
 
-  // تتبع حركة الماوس داخل المكون المعزول
-  if (typeof window !== 'undefined') {
-    window.addEventListener('mousemove', (e) => {
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
       mousePosition.current = {
         x: (e.clientX / window.innerWidth) * 2 - 1,
         y: -(e.clientY / window.innerHeight) * 2 + 1,
       };
-    });
-  }
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
     <div className="fixed inset-0 z-0">
       <Canvas
         camera={{ position: [0, 0, 5], fov: 75 }}
+        gl={{ 
+          antialias: false, 
+          powerPreference: "high-performance",
+          alpha: false,
+          stencil: false,
+          depth: true
+        }}
         onCreated={({ gl }) => {
           gl.setClearColor('#0f172a', 1);
-        }}
-        onError={() => {
-          // في حالة فشل المحرك حتى بعد الفحص، نقوم بإخفاءه صمتاً
-          console.warn("3D Rendering failed, falling back to static.");
         }}
       >
         <Suspense fallback={null}>
