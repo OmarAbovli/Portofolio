@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { getSql } from './_lib/db';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -6,6 +7,7 @@ export default async function handler(req: any, res: any) {
   }
 
   const { username, password } = req.body;
+  const sql = getSql();
 
   const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
   const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;

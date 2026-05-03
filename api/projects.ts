@@ -1,4 +1,4 @@
-import { getSql } from './db';
+import { getSql } from './_lib/db';
 import jwt from 'jsonwebtoken';
 
 const verifyAuth = (req: any) => {
