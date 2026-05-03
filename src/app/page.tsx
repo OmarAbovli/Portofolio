@@ -1,32 +1,41 @@
 "use client";
 
-import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Projects from '@/components/Projects';
 import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
-import Scene3D from '@/components/Scene3D';
 import LoadingScreen from '@/components/LoadingScreen';
 import Navigation from '@/components/Navigation';
+
+// تحميل الـ Canvas بشكل ديناميكي جداً لضمان عدم تحميل Three.js إلا عند الحاجة
+const Scene3D = dynamic(() => import('@/components/Scene3D'), { ssr: false });
+const Canvas = dynamic(() => import('@react-three/fiber').then(m => m.Canvas), { ssr: false });
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const [hasWebGL, setHasWebGL] = useState(true);
+  const [show3D, setShow3D] = useState(false);
   const mousePosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     setMounted(true);
     
-    // فحص دعم WebGL
-    try {
-      const canvas = document.createElement('canvas');
-      const support = !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-      setHasWebGL(support);
-    } catch (e) {
-      setHasWebGL(false);
+    // فحص دعم WebGL بدقة قبل تفعيل أي كود 3D
+    const checkWebGL = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && 
+          (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      } catch (e) {
+        return false;
+      }
+    };
+
+    if (checkWebGL()) {
+      setShow3D(true);
     }
 
     const timer = setTimeout(() => setLoading(false), 2000);
@@ -53,35 +62,29 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-[#0f172a] bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-x-hidden">
-      {/* 3D Background Scene - Render only if WebGL is supported */}
-      {hasWebGL && (
+      {/* 3D Background - Render ONLY if confirmed support and mounted */}
+      {show3D && (
         <div className="fixed inset-0 z-0">
-          <Canvas
-            camera={{ position: [0, 0, 5], fov: 75 }}
-            onCreated={({ gl }) => {
-              gl.setClearColor('#0f172a', 1);
-            }}
-            onError={(e) => {
-              console.warn("WebGL Canvas Error:", e);
-              setHasWebGL(false);
-            }}
-          >
-            <Suspense fallback={null}>
+          <Suspense fallback={<div className="fixed inset-0 bg-[#0f172a]" />}>
+            <Canvas
+              camera={{ position: [0, 0, 5], fov: 75 }}
+              onCreated={({ gl }) => {
+                gl.setClearColor('#0f172a', 1);
+              }}
+            >
               <Scene3D mousePosition={mousePosition} />
-            </Suspense>
-          </Canvas>
+            </Canvas>
+          </Suspense>
         </div>
       )}
 
-      {/* Fallback Background if no WebGL */}
-      {!hasWebGL && (
+      {/* Fallback Static Background */}
+      {!show3D && (
         <div className="fixed inset-0 z-0 bg-[#0f172a]" />
       )}
 
-      {/* Navigation */}
       <Navigation />
 
-      {/* Content */}
       <main className="relative z-10">
         <Hero />
         <About />
@@ -90,12 +93,12 @@ export default function Home() {
         <Contact />
       </main>
 
-      {/* Floating particles */}
+      {/* Particles effect for extra depth even without 3D */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-cyan-400 rounded-full animate-pulse"
+            className="absolute w-1 h-1 bg-cyan-400/30 rounded-full animate-pulse"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
