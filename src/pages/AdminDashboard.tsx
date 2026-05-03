@@ -110,6 +110,21 @@ const AdminDashboard = () => {
     setTechInput(project.tech_stack.join(', '));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Image size too large (max 2MB)');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, image_url: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleTechChange = (val: string) => {
     setTechInput(val);
     setFormData({ ...formData, tech_stack: val.split(',').map(s => s.trim()).filter(s => s !== '') });
@@ -155,13 +170,26 @@ const AdminDashboard = () => {
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-mono text-slate-400">Image URL</label>
-                    <Input 
-                      value={formData.image_url} 
-                      onChange={(e) => setFormData({...formData, image_url: e.target.value})}
-                      className="bg-slate-800 border-slate-700" 
-                    />
+                  <div className="space-y-2">
+                    <label className="text-xs font-mono text-slate-400">Project Image</label>
+                    <div className="flex flex-col gap-2">
+                      {formData.image_url && (
+                        <img src={formData.image_url} alt="Preview" className="w-full h-20 object-cover rounded border border-slate-700" />
+                      )}
+                      <Input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="bg-slate-800 border-slate-700 text-xs" 
+                      />
+                      <p className="text-[10px] text-slate-500">Or paste URL below:</p>
+                      <Input 
+                        value={formData.image_url} 
+                        onChange={(e) => setFormData({...formData, image_url: e.target.value})}
+                        className="bg-slate-800 border-slate-700 h-8 text-xs" 
+                        placeholder="Image URL"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-mono text-slate-400">Tech Stack (comma separated)</label>
