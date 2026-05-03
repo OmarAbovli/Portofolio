@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
@@ -9,8 +9,9 @@ import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
 import LoadingScreen from '@/components/LoadingScreen';
 import Navigation from '@/components/Navigation';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
-// تحميل المكون الـ 3D بشكل معزول تماماً
+// تحميل المكون الـ 3D بشكل معزول
 const ThreeBackground = dynamic(() => import('@/components/ThreeBackground'), { 
   ssr: false,
   loading: () => <div className="fixed inset-0 bg-[#0f172a]" />
@@ -24,14 +25,14 @@ export default function Home() {
   useEffect(() => {
     setMounted(true);
     
-    // الانتظار قليلاً قبل محاولة تحميل الـ 3D لضمان استقرار المتصفح
+    // تأخير بسيط لضمان استقرار الصفحة
     const timer3d = setTimeout(() => {
       setLoad3D(true);
-    }, 2000);
+    }, 1500);
 
     const timerLoading = setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 800);
 
     return () => {
       clearTimeout(timer3d);
@@ -43,15 +44,18 @@ export default function Home() {
     return <LoadingScreen />;
   }
 
+  const staticFallback = (
+    <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800" />
+  );
+
   return (
     <div className="relative min-h-screen bg-[#0f172a] overflow-x-hidden">
-      {/* 3D Background - Loaded with delay for stability */}
-      {load3D && <ThreeBackground />}
-
-      {/* Background Fallback while 3D is loading or if it fails */}
-      {!load3D && (
-        <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800" />
-      )}
+      {/* 3D Background with ERROR PROTECTION */}
+      {load3D ? (
+        <ErrorBoundary fallback={staticFallback}>
+          <ThreeBackground />
+        </ErrorBoundary>
+      ) : staticFallback}
 
       <Navigation />
 
@@ -63,12 +67,12 @@ export default function Home() {
         <Contact />
       </main>
 
-      {/* Subtle particles for extra atmosphere */}
+      {/* Particles as extra layer */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
         {[...Array(15)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-cyan-400 rounded-full animate-pulse"
+            className="absolute w-1 h-1 bg-blue-400 rounded-full animate-pulse"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
