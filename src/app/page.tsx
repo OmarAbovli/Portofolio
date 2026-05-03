@@ -17,10 +17,21 @@ const Scene3D = dynamic(() => import('@/components/Scene3D'), { ssr: false });
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [hasWebGL, setHasWebGL] = useState(true);
   const mousePosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     setMounted(true);
+    
+    // فحص دعم WebGL لمنع الانهيار
+    try {
+      const canvas = document.createElement('canvas');
+      const support = !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      setHasWebGL(support);
+    } catch (e) {
+      setHasWebGL(false);
+    }
+
     const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
@@ -44,20 +55,28 @@ export default function Home() {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-x-hidden">
-      {/* 3D Background Scene */}
-      <div className="fixed inset-0 z-0">
-        <Canvas
-          camera={{ position: [0, 0, 5], fov: 75 }}
-          onCreated={({ gl }) => {
-            gl.setClearColor('#0f172a', 1);
-          }}
-        >
-          <Suspense fallback={null}>
-            <Scene3D mousePosition={mousePosition} />
-          </Suspense>
-        </Canvas>
-      </div>
+    <div className="relative min-h-screen bg-[#0f172a] bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-x-hidden">
+      {/* 3D Background Scene - Only render if WebGL is supported */}
+      {hasWebGL && (
+        <div className="fixed inset-0 z-0">
+          <Canvas
+            camera={{ position: [0, 0, 5], fov: 75 }}
+            gl={{ preserveDrawingBuffer: true, antialias: false, powerPreference: 'low-power' }}
+            onCreated={({ gl }) => {
+              gl.setClearColor('#0f172a', 1);
+            }}
+          >
+            <Suspense fallback={null}>
+              <Scene3D mousePosition={mousePosition} />
+            </Suspense>
+          </Canvas>
+        </div>
+      )}
+
+      {/* Fallback background if no WebGL */}
+      {!hasWebGL && (
+        <div className="fixed inset-0 z-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-from)_0%,_transparent_70%)] from-blue-500/20" />
+      )}
 
       {/* Navigation */}
       <Navigation />
