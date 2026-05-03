@@ -1,4 +1,4 @@
-import { sql } from './db';
+import { getSql } from './db';
 import jwt from 'jsonwebtoken';
 
 const verifyAuth = (req: any) => {
@@ -14,6 +14,8 @@ const verifyAuth = (req: any) => {
 
 export default async function handler(req: any, res: any) {
   try {
+    const sql = getSql();
+    
     switch (req.method) {
       case 'GET':
         const projects = await sql`SELECT * FROM projects ORDER BY created_at DESC`;
@@ -54,6 +56,10 @@ export default async function handler(req: any, res: any) {
     }
   } catch (error: any) {
     console.error('Projects API error:', error);
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ 
+      error: 'API Error', 
+      message: error.message,
+      hint: 'Please check DATABASE_URL in Vercel settings.'
+    });
   }
 }
