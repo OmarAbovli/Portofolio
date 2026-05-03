@@ -1,8 +1,5 @@
 import { sql } from './db';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const verifyAuth = (req: any) => {
   const token = req.headers.authorization?.split(' ')[1];

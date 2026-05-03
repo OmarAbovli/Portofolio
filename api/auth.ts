@@ -1,7 +1,4 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
