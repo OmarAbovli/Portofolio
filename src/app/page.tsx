@@ -1,18 +1,18 @@
+"use client";
 
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState, useRef } from 'react';
-import Hero from '../components/Hero';
-import About from '../components/About';
-import Projects from '../components/Projects';
-import Skills from '../components/Skills';
-import Contact from '../components/Contact';
-import Scene3D from '../components/Scene3D';
-import LoadingScreen from '../components/LoadingScreen';
-import Navigation from '../components/Navigation';
+import Hero from '@/components/Hero';
+import About from '@/components/About';
+import Projects from '@/components/Projects';
+import Skills from '@/components/Skills';
+import Contact from '@/components/Contact';
+import Scene3D from '@/components/Scene3D';
+import LoadingScreen from '@/components/LoadingScreen';
+import Navigation from '@/components/Navigation';
 
-const Index = () => {
+export default function Home() {
   const [loading, setLoading] = useState(true);
-  // Optimize performance: use ref for mouse position to avoid re-renders
   const mousePosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -81,6 +81,4 @@ const Index = () => {
       </div>
     </div>
   );
-};
-
-export default Index;
+}

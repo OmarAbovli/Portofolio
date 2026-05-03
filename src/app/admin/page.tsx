@@ -1,11 +1,13 @@
+"use client";
+
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Plus, Trash2, Edit2, LogOut, ExternalLink, Github } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Project {
   id?: number;
@@ -31,12 +33,12 @@ const AdminDashboard = () => {
     demo_path: ''
   });
   const [techInput, setTechInput] = useState('');
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
     if (!token) {
-      navigate('/login');
+      router.push('/login');
       return;
     }
     fetchProjects();
@@ -46,7 +48,9 @@ const AdminDashboard = () => {
     try {
       const res = await fetch('/api/projects');
       const data = await res.json();
-      setProjects(data);
+      if (Array.isArray(data)) {
+        setProjects(data);
+      }
     } catch (error) {
       toast.error('Failed to fetch projects');
     }
@@ -54,7 +58,22 @@ const AdminDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
-    navigate('/login');
+    router.push('/login');
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Image size too large (max 2MB)');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, image_url: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -110,21 +129,6 @@ const AdminDashboard = () => {
     setTechInput(project.tech_stack.join(', '));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error('Image size too large (max 2MB)');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image_url: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleTechChange = (val: string) => {
     setTechInput(val);
     setFormData({ ...formData, tech_stack: val.split(',').map(s => s.trim()).filter(s => s !== '') });
@@ -141,7 +145,6 @@ const AdminDashboard = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Form Section */}
           <Card className="bg-slate-900 border-slate-800 text-white">
             <CardHeader>
               <CardTitle className="font-mono flex items-center gap-2">
@@ -246,7 +249,6 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* List Section */}
           <div className="space-y-4 overflow-y-auto max-h-[800px] pr-2">
             <h2 className="text-xl font-mono flex items-center gap-2">
               <Plus size={18} /> Current Projects
@@ -265,10 +267,6 @@ const AdminDashboard = () => {
                         <Trash2 size={14} />
                       </Button>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    {p.github_url && <a href={p.github_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white"><Github size={16}/></a>}
-                    {p.live_url && <a href={p.live_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white"><ExternalLink size={16}/></a>}
                   </div>
                 </CardContent>
               </Card>
