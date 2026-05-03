@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useRef } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import Scene3D from './Scene3D';
 
 const ThreeBackground = () => {
