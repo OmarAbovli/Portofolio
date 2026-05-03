@@ -1,26 +1,33 @@
 "use client";
 
-import { Canvas } from '@react-three/fiber';
+import dynamic from 'next/dynamic';
 import { Suspense, useEffect, useState, useRef } from 'react';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Projects from '@/components/Projects';
 import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
-import Scene3D from '@/components/Scene3D';
 import LoadingScreen from '@/components/LoadingScreen';
 import Navigation from '@/components/Navigation';
 
+// تحميل مكونات الـ 3D بشكل ديناميكي لتعطيل الـ SSR
+const Canvas = dynamic(() => import('@react-three/fiber').then((mod) => mod.Canvas), { ssr: false });
+const Scene3D = dynamic(() => import('@/components/Scene3D'), { ssr: false });
+
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const mousePosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    setMounted(true);
     const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    
     const handleMouseMove = (e: MouseEvent) => {
       mousePosition.current = {
         x: (e.clientX / window.innerWidth) * 2 - 1,
@@ -30,9 +37,9 @@ export default function Home() {
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [mounted]);
 
-  if (loading) {
+  if (!mounted || loading) {
     return <LoadingScreen />;
   }
 
